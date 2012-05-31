@@ -1,0 +1,16 @@
+# crambots
+
+My public bots for competing in https://github.com/baznex/crosscram
+
+## Usage
+
+```bash
+lein run -m crosscram.main org.timmc.crambots.bullets crosscram.samples.reserves-move 16 16 10
+```
+
+## License
+
+© 2012 Tim McCormack
+
+Distributed under the Eclipse Public License v1.0, the same as Crosscram
+and Clojure.
