@@ -1,7 +1,8 @@
 (ns org.timmc.crambots.bullets
   "Flexibly scored bot that prefers (in descending order) moves that
 have open space above and below, on odd-numbered rows, starting on even-
-numbered columns, on the right side of the board."
+numbered columns, on the right side of the board. (Ordering subject to
+change."
   (:require [crosscram.game :as cc])
   (:use [org.timmc.handy :only (lexicomp)]))
 
@@ -34,11 +35,12 @@ containing the values from the board."
 lexicographically."
   [board move]
   (let [[[r0 c0] [_ c1]] (canonical move)
-        hood (neighborhood board [1 0] move)]
-    [(score-rows-open hood) ;; prefer to gain space
-     (if (odd? r0) 1 0)     ;; most importantly, use odd rows
+        hood (neighborhood board [1 0] move)
+        row-pred (if (odd? (get (cc/board-size board) 0)) odd? even?)]
+    [(score-rows-open hood) ;; gain space
+     (if (row-pred r0) 1 0) ;; use odd rows on odd boards
      (if (even? c0) 1 0)    ;; even columns give better filling of rows
-     c0                     ;; prefer the right side of the board (tie-break)
+     ;;c0 ;; makes worse against reserves-move  ;; prefer right side of board
      ]))
 
 (defn candidates
@@ -50,7 +52,7 @@ lexicographically."
   (->> (candidates (:board game))
        (sort-by :score (comp - lexicomp))
        (partition-by :score)
-       (drop-while empty?)
+       ;;(drop-while empty?)
        first
        rand-nth
        :move))
